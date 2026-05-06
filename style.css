@@ -126,6 +126,12 @@ input[type="number"],
     outline: none;
 }
 
+/* Auto-calculated flour percentage inputs */
+input.auto-filled {
+    background: #eef5e4 !important;
+    color: #4a8a1a !important;
+}
+
 .weight-display { 
     font-weight: 500; 
 }
