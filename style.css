@@ -1,10 +1,10 @@
 :root {
-    --color-text-primary: #333333;
+    --color-text-primary: #071476a8;
     --color-text-secondary: #666666;
     --color-text-light: #999999;
     --color-bg-input: #f8f8f8;
     --color-accent: #97C459;
-    --font-main: 'Roboto', 'Roboto Thai', sans-serif;
+    --font-main: 'Roboto', 'Noto Sans Thai', sans-serif;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -20,17 +20,17 @@ body {
 .wrap { max-width: 600px; margin: 0 auto; padding: 1.5rem 1rem; }
 
 .header { margin-bottom: 1.25rem; }
-.header h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+.header h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px;color: var(--color-text-primary); }
 .header p { font-size: 13px; color: var(--color-text-secondary); }
 
 .piece-section { 
     background: #EAF3DE; border: 1px solid #97C459; 
     border-radius: var(--border-radius-lg); padding: 1rem; margin-bottom: 1rem; 
 }
-.sec-title { font-size: 12px; font-weight: 600; color: #3B6D11; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
+.sec-title { font-size: 14px; font-weight: 600; color: #3B6D11; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
 .piece-row { display: flex; align-items: center; gap: 10px; }
 .piece-field { flex: 1; }
-.piece-field label { font-size: 11px; color: #3B6D11; font-weight: 600; display: block; margin-bottom: 4px; }
+.piece-field label { font-size: 14px; color: #3B6D11; font-weight: 600; display: block; margin-bottom: 4px; }
 .piece-field input { 
     font-size: 18px; font-weight: 700; text-align: center; width: 100%; 
     color: #27500A; border: 1px solid #97C459; border-radius: 4px; padding: 4px; 
@@ -56,33 +56,32 @@ body {
     margin: 24px 0 12px; 
 }
 
-table.recipe { 
-    width: 100%; 
+table.recipe {
+    width: 100%;
     border-collapse: collapse;
-    table-layout: fixed; /* บังคับความกว้างคอลัมน์ให้เท่ากันทุกตาราง */
+    table-layout: fixed; /* บังคับให้คอลัมน์บน-ล่างตรงกันเป๊ะ */
+    margin-bottom: 5px;
 }
+table.recipe th {
+    font-size: 15px;      /* ขนาดใหญ่ขึ้น */
+    font-weight: 700;    /* หนาที่สุด */
+    color: #222;         /* สีเข้มคมชัด */
+    padding: 12px 0;
 
-table.recipe th { 
-    font-size: 12px; 
-    letter-spacing: 0.05em;
-    color: var(--color-text-tertiary); 
-    padding: 12px 8px; 
-    border-bottom: 1px solid var(--color-border-primary); 
-    text-transform: uppercase;
-    font-weight: 500;
 }
-table.recipe th:nth-child(1), table.recipe td:nth-child(1) { width: 45%; }
+table.recipe th:nth-child(1), table.recipe td:nth-child(1) { width: 45%; text-align: left; }
 table.recipe th:nth-child(2), table.recipe td:nth-child(2) { width: 25%; text-align: right; }
 table.recipe th:nth-child(3), table.recipe td:nth-child(3) { width: 20%; text-align: right; }
 table.recipe th:nth-child(4), table.recipe td:nth-child(4) { width: 10%; text-align: center; }
 
-
 table.recipe td {
-    padding: 12px 0;
+    padding: 5px 0;
     border-bottom: 1px solid #f2f2f2;
 }
-
-/* เอาเส้นขอบล่างออกในแถวสุดท้ายเพื่อให้ดูมินิมอล */
+table.recipe th:first-child {
+    text-align: left;
+    padding-left: 0; 
+}
 table.recipe tr:last-child td {
     border-bottom: none;
 }
@@ -91,8 +90,10 @@ table.recipe tr:last-child td {
 }
 
 input[type="text"] { 
+    font-family: 'Noto Sans Thai', sans-serif;
+    font-weight: 400; 
     border: none;
-    font-size: 14px;
+    font-size: 15px;
     color: var(--color-text-primary);
     padding: 4px 0;
     background: transparent;
@@ -103,10 +104,11 @@ input[type="text"]:focus { background: #fff; border-radius: 4px; box-shadow: 0 0
 input[type="number"], 
 .piece-result-val, 
 .weight-display, 
-.num-cell input {
-    font-family: 'Roboto', sans-serif;
-    font-variant-numeric: tabular-nums; /* ทำให้ตัวเลขมีความกว้างเท่ากัน จัดแนวได้ตรงเป๊ะ */
+.num-cell input {  
+    font-variant-numeric: tabular-nums; /* เลขจะเรียงตรงกันสวยงาม */
+    font-size: 14px;
 }
+
 .num-cell input { 
     width: 60px; /* เล็กลง */
     border: none;
@@ -116,7 +118,6 @@ input[type="number"],
     font-size: 14px;
     color: var(--color-text-primary);
     text-align: right;
-    font-family: 'Inter', 'Noto Sans Thai';
 }
 
 .num-cell input:focus {

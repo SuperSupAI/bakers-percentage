@@ -7,8 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Thai:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <title>Baker's Percentage Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">    <title>Baker's Percentage Calculator</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -54,14 +53,13 @@
         <div id="flourStatusMsg">กำลังรอข้อมูล...</div>
     </div>
 
-    <p class="section-label" id="label-flour">รายการแป้ง (Flours)</p>
-    <table class="recipe">
+<table class="recipe">
         <thead>
             <tr>
-                <th id="txt-th-name">แป้ง</th>
-                <th id="txt-th-pct" style="width: 120px; text-align: right;">Baker's %</th>
-                <th id="txt-th-weight" style="width: 100px; text-align: right;">น้ำหนัก (g)</th>
-                <th style="width: 40px;"></th>
+                <th class="txt-th-name">แป้ง/ส่วนผสม</th>
+                <th class="txt-th-pct">BAKER'S %</th>
+                <th class="txt-th-weight">น้ำหนัก (G)</th>
+                <th></th>
             </tr>
         </thead>
         <tbody id="flourBody"></tbody>
@@ -70,8 +68,12 @@
         <button onclick="addItem('flour')" id="btn-add-flour"><i class="ti ti-plus"></i> เพิ่มแป้ง</button>
     </div>
 
-    <p class="section-label" id="label-ing">ส่วนผสมอื่นๆ (Other Ingredients)</p>
+    <!-- ระยะห่างระหว่างเซกชัน (ปรับตามใจชอบ) -->
+    <div style="margin-top: 20px;"></div>
+
+    <!-- ส่วนที่ 2: ตารางส่วนผสมอื่นๆ (Other Ingredients) -->
     <table class="recipe">
+        <!-- ลบ <thead> ... </thead> ส่วนนี้ออกไปแล้ว -->
         <tbody id="ingBody"></tbody>
     </table>
     <div class="add-row">
@@ -83,7 +85,6 @@
     </div>
 </div>
 
-<!-- สำคัญมาก: เรียงลำดับการโหลดไฟล์ JS -->
 <script src="calculator.js"></script>
 <script src="language.js"></script>
 </body>
