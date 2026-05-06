@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">    <title>Baker's Percentage Calculator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrap">
+    <!--   <div class="back-nav">
+    <a href="index.html"><i class="ti ti-arrow-left"></i> กลับหน้าหลัก</a>
+    </div>--> 
+    <div class="lang-switch">
+        <button onclick="changeLang('th')" id="btn-th" class="active">TH</button>
+        <span>|</span>
+        <button onclick="changeLang('en')" id="btn-en">EN</button>
+    </div>
+
+    <div class="header">
+        <h1 id="txt-title">Baker's Percentage Calculator</h1>
+        <p id="txt-subtitle">คำนวณน้ำหนักกรัมแบบปัดเศษจำนวนเต็ม (Standard Rounding)</p>
+    </div>
+
+    <div class="piece-section">
+        <div class="sec-title"><i class="ti ti-bread"></i> <span id="txt-step1">ขั้นตอนที่ 1 — กำหนดจำนวนและขนาดก้อน</span></div>
+        <div class="piece-row">
+            <div class="piece-field">
+                <label id="txt-num-pcs">จำนวนก้อน</label>
+                <input type="number" id="numPieces" value="24" min="1" oninput="recalculateWeights()">
+            </div>
+            <div class="piece-op">×</div>
+            <div class="piece-field">
+                <label id="txt-weight-pcs">น้ำหนักต่อก้อน (g)</label>
+                <input type="number" id="weightPerPiece" value="50" min="1" oninput="recalculateWeights()">
+            </div>
+            <div class="piece-op">=</div>
+            <div class="piece-result">
+                <label id="txt-total-goal">โดว์รวมที่ต้องการ</label>
+                <div class="piece-result-val" id="totalDoughDisplay">1200 g</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-bar" id="flourStatusBar">
+        <div><span id="txt-flour-sum">ยอดรวมแป้งปัจจุบัน</span>: <span id="currentFlourSum">0%</span></div>
+        <div id="flourStatusMsg">กำลังรอข้อมูล...</div>
+    </div>
+
+<table class="recipe">
+        <thead>
+            <tr>
+                <th class="txt-th-name">แป้ง/ส่วนผสม</th>
+                <th class="txt-th-pct">BAKER'S %</th>
+                <th class="txt-th-weight">น้ำหนัก (G)</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="flourBody"></tbody>
+    </table>
+    <div class="add-row">
+        <button onclick="addItem('flour')" id="btn-add-flour"><i class="ti ti-plus"></i> เพิ่มแป้ง</button>
+    </div>
+
+    <!-- ระยะห่างระหว่างเซกชัน (ปรับตามใจชอบ) -->
+    <div style="margin-top: 20px;"></div>
+
+    <!-- ส่วนที่ 2: ตารางส่วนผสมอื่นๆ (Other Ingredients) -->
+    <table class="recipe">
+        <!-- ลบ <thead> ... </thead> ส่วนนี้ออกไปแล้ว -->
+        <tbody id="ingBody"></tbody>
+    </table>
+    <div class="add-row">
+        <button onclick="addItem('ing')" id="btn-add-ing"><i class="ti ti-plus"></i> เพิ่มส่วนผสมอื่น</button>
+    </div>
+
+    <div class="formula-note" id="txt-note">
+        <strong>Rounding:</strong> ระบบจะปัดเศษเป็นจำนวนเต็ม (เช่น 594.5 → 595)
+    </div>
+</div>
+
+<script src="calculator.js"></script>
+<script src="language.js"></script>
+</body>
+</html>
