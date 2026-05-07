@@ -9,7 +9,7 @@ const translations = {
         flourSum: "ยอดรวมแป้งปัจจุบัน",
         flourLabel: "รายการแป้ง (FLOURS)",
         ingLabel: "ส่วนผสมอื่นๆ (OTHER INGREDIENTS)",
-        thName: "ส่วนผสม",
+        thName: "วัตถุดิบ",
         thPct: "Baker's %",
         thWeight: "น้ำหนัก (g)",
         addFlour: "เพิ่มแป้ง",
