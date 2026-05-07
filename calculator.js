@@ -1,6 +1,5 @@
 let flours = [
     { id: 1, name: 'Bread Flour', pct: 100, locked: true },
-    { id: 2, name: 'Whole Wheat Flour', pct: 0, locked: false }
 ];
 
 let ingredients = [
@@ -179,3 +178,49 @@ function removeItem(type, id) {
 }
 
 renderTables();
+
+function showSummary() {
+    const num = parseFloat(document.getElementById('numPieces').value) || 0;
+    const weight = parseFloat(document.getElementById('weightPerPiece').value) || 0;
+    const totalDough = num * weight;
+
+    const otherSum = ingredients.reduce((s, i) => s + i.pct, 0);
+    const totalFlourBase = totalDough / ((100 + otherSum) / 100);
+
+    const t = (typeof translations !== 'undefined') ? translations[currentLang] : {};
+    const getName = item => (t[item.name] || item.name);
+
+    let flourRows = flours.map(f => {
+        const w = Math.round((totalFlourBase * f.pct) / 100);
+        return `<tr class="s-flour"><td>${getName(f)}</td><td>${f.pct}%</td><td>${w.toLocaleString()} g</td></tr>`;
+    }).join('');
+
+    let ingRows = ingredients.map(i => {
+        const w = Math.round((totalFlourBase * i.pct) / 100);
+        return `<tr><td>${getName(i)}</td><td>${i.pct}%</td><td>${w.toLocaleString()} g</td></tr>`;
+    }).join('');
+
+    const yieldLabel = t.yieldLabel || 'Yield';
+    const totalLabel = t.totalLabel || 'Total';
+    const thName = t.thName || 'Ingredient';
+    const thPct = t.thPct || "Baker's %";
+    const thWeight = t.thWeight || 'Weight (g)';
+
+    document.getElementById('summaryContent').innerHTML = `
+        <div class="summary-yield">${yieldLabel}: <strong>${num} × ${weight} g = ${totalDough.toLocaleString()} g</strong></div>
+        <table class="summary-table">
+            <thead><tr><th>${thName}</th><th>${thPct}</th><th>${thWeight}</th></tr></thead>
+            <tbody>${flourRows}${ingRows}</tbody>
+            <tfoot><tr><td colspan="3" class="summary-total">${totalLabel}: ${totalDough.toLocaleString()} g</td></tr></tfoot>
+        </table>`;
+
+    document.getElementById('summaryModal').style.display = 'flex';
+}
+
+function closeSummary() {
+    document.getElementById('summaryModal').style.display = 'none';
+}
+
+function handleOverlayClick(e) {
+    if (e.target === document.getElementById('summaryModal')) closeSummary();
+}

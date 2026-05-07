@@ -57,7 +57,7 @@
 <table class="recipe">
         <thead>
             <tr>
-                <th class="txt-th-name">แป้ง/ส่วนผสม</th>
+                <th class="txt-th-name">ส่วนผสม</th>
                 <th class="txt-th-pct">BAKER'S %</th>
                 <th class="txt-th-weight">น้ำหนัก (G)</th>
                 <th></th>
@@ -83,6 +83,28 @@
 
     <div class="formula-note" id="txt-note">
         <strong>Rounding:</strong> ระบบจะปัดเศษเป็นจำนวนเต็ม (เช่น 594.5 → 595)
+    </div>
+
+    <div class="summary-action-row">
+        <button onclick="showSummary()" id="btn-summary" class="summary-btn">
+            <i class="ti ti-clipboard-list"></i> <span id="txt-btn-summary">สรุปสูตร</span>
+        </button>
+    </div>
+</div>
+
+<!-- Summary Modal -->
+<div id="summaryModal" class="modal-overlay" style="display:none" onclick="handleOverlayClick(event)">
+    <div class="modal-box">
+        <div class="modal-header">
+            <input type="text" id="recipeName" class="recipe-name-input" placeholder="ชื่อสูตร / Recipe name">
+            <button class="modal-close no-print" onclick="closeSummary()">×</button>
+        </div>
+        <div id="summaryContent"></div>
+        <div class="modal-actions no-print">
+            <button onclick="window.print()" class="print-btn">
+                <i class="ti ti-printer"></i> <span id="txt-btn-print">พิมพ์</span>
+            </button>
+        </div>
     </div>
 </div>
 
