@@ -1,3 +1,83 @@
+let portions = [
+    { id: 1, qty: 24, weight: 50 },
+   
+];
+
+function renderPortions() {
+    const container = document.getElementById('portionRows');
+    if (!container) return;
+    container.innerHTML = '';
+    const t = (typeof translations !== 'undefined' && typeof currentLang !== 'undefined')
+        ? translations[currentLang] : {};
+
+    portions.forEach((p, index) => {
+        const isFirst = index === 0;
+        const hideDel = portions.length === 1 ? 'style="visibility:hidden"' : '';
+        const subtotal = p.qty * p.weight;
+        const row = document.createElement('div');
+        row.className = 'piece-row';
+        if (index > 0) row.style.marginTop = '6px';
+
+        if (isFirst) {
+            row.innerHTML = `
+                <div class="piece-field">
+                    <label id="txt-num-pcs">${t.numPcs || 'จำนวนก้อน'}</label>
+                    <input type="number" value="${p.qty}" min="1" oninput="updatePortion(${p.id}, 'qty', this.value)">
+                </div>
+                <div class="piece-op">×</div>
+                <div class="piece-field">
+                    <label id="txt-weight-pcs">${t.weightPcs || 'น้ำหนักต่อก้อน (g)'}</label>
+                    <input type="number" value="${p.weight}" min="1" oninput="updatePortion(${p.id}, 'weight', this.value)">
+                </div>
+                <div class="piece-op">=</div>
+                <div class="piece-result">
+                    <label>&nbsp;</label>
+                    <div class="piece-sub-val" id="sub-${p.id}">${subtotal.toLocaleString()} g</div>
+                </div>
+                <button class="del-btn" style="align-self:flex-end;margin-bottom:5px" onclick="removePortion(${p.id})" ${hideDel}>×</button>
+            `;
+        } else {
+            row.innerHTML = `
+                <div class="piece-field">
+                    <input type="number" value="${p.qty}" min="1" oninput="updatePortion(${p.id}, 'qty', this.value)">
+                </div>
+                <div class="piece-op" style="padding-top:0">×</div>
+                <div class="piece-field">
+                    <input type="number" value="${p.weight}" min="1" oninput="updatePortion(${p.id}, 'weight', this.value)">
+                </div>
+                <div class="piece-op" style="padding-top:0">=</div>
+                <div class="piece-result" style="align-self:center">
+                    <div class="piece-sub-val" id="sub-${p.id}">${subtotal.toLocaleString()} g</div>
+                </div>
+                <button class="del-btn" onclick="removePortion(${p.id})" ${hideDel}>×</button>
+            `;
+        }
+        container.appendChild(row);
+    });
+    recalculateWeights();
+}
+
+function addPortion() {
+    portions.push({ id: Date.now(), qty: 2, weight: 450 });
+    renderPortions();
+}
+
+function removePortion(id) {
+    if (portions.length > 1) {
+        portions = portions.filter(p => p.id !== id);
+        renderPortions();
+    }
+}
+
+function updatePortion(id, field, val) {
+    const p = portions.find(x => x.id === id);
+    if (!p) return;
+    p[field] = parseFloat(val) || 0;
+    const subEl = document.getElementById(`sub-${p.id}`);
+    if (subEl) subEl.textContent = (p.qty * p.weight).toLocaleString() + ' g';
+    recalculateWeights();
+}
+
 let flours = [
     { id: 1, name: 'Bread Flour', pct: 100, locked: true },
 ];
@@ -106,10 +186,9 @@ function updateData(type, id, field, val) {
 }
 
 function recalculateWeights() {
-    const num = parseFloat(document.getElementById('numPieces').value) || 0;
-    const weight = parseFloat(document.getElementById('weightPerPiece').value) || 0;
-    const totalDoughGoal = num * weight;
-    document.getElementById('totalDoughDisplay').textContent = totalDoughGoal.toLocaleString() + ' g';
+    const totalDoughGoal = portions.reduce((s, p) => s + p.qty * p.weight, 0);
+    const totalEl = document.getElementById('totalDoughDisplay');
+    if (totalEl) totalEl.textContent = totalDoughGoal.toLocaleString() + ' g';
 
     const flourSum = flours.reduce((s, f) => s + f.pct, 0);
     const otherSum = ingredients.reduce((s, i) => s + i.pct, 0);
@@ -178,11 +257,10 @@ function removeItem(type, id) {
 }
 
 renderTables();
+renderPortions();
 
 function showSummary() {
-    const num = parseFloat(document.getElementById('numPieces').value) || 0;
-    const weight = parseFloat(document.getElementById('weightPerPiece').value) || 0;
-    const totalDough = num * weight;
+    const totalDough = portions.reduce((s, p) => s + p.qty * p.weight, 0);
 
     const otherSum = ingredients.reduce((s, i) => s + i.pct, 0);
     const totalFlourBase = totalDough / ((100 + otherSum) / 100);
@@ -206,8 +284,9 @@ function showSummary() {
     const thPct = t.thPct || "Baker's %";
     const thWeight = t.thWeight || 'Weight (g)';
 
+    const yieldParts = portions.map(p => `${p.qty} × ${p.weight} g`).join(' + ');
     document.getElementById('summaryContent').innerHTML = `
-        <div class="summary-yield">${yieldLabel}: <strong>${num} × ${weight} g = ${totalDough.toLocaleString()} g</strong></div>
+        <div class="summary-yield">${yieldLabel}: <strong>${yieldParts} = ${totalDough.toLocaleString()} g</strong></div>
         <table class="summary-table">
             <thead><tr><th>${thName}</th><th>${thPct}</th><th>${thWeight}</th></tr></thead>
             <tbody>${flourRows}${ingRows}</tbody>

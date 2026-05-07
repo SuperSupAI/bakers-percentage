@@ -36,7 +36,26 @@ body {
     color: #27500A; border: 1px solid #97C459; border-radius: 4px; padding: 4px; 
 }
 .piece-op { font-size: 18px; color: #639922; padding-top: 15px; }
-.piece-result-val { 
+.piece-result { flex: 1; }
+.piece-result label { font-size: 14px; color: #3B6D11; font-weight: 600; display: block; margin-bottom: 4px; }
+.piece-sub-val {
+    font-size: 16px; font-weight: 700; color: #27500A;
+    text-align: center; font-variant-numeric: tabular-nums; padding: 4px 0;
+}
+.piece-add-row { margin: 6px 0 4px; }
+.piece-add-row button {
+    padding: 4px 12px; border: 1px dashed #97C459; background: rgba(255,255,255,0.6);
+    border-radius: 6px; color: #3B6D11; cursor: pointer; font-size: 13px;
+    font-family: var(--font-main); display: flex; align-items: center; gap: 5px;
+    transition: background 0.2s;
+}
+.piece-add-row button:hover { background: #f4f9eb; }
+.portion-total-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 8px; padding-top: 8px; border-top: 1px dashed #97C459;
+    font-size: 14px; color: #3B6D11; font-weight: 600;
+}
+.piece-result-val {
     font-size: 18px; font-weight: 700; color: #27500A; background: #C0DD97; 
     border-radius: 4px; padding: 6px; text-align: center; border: 1px solid #97C459; 
 }

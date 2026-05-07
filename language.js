@@ -12,6 +12,7 @@ const translations = {
         thName: "วัตถุดิบ",
         thPct: "Baker's %",
         thWeight: "น้ำหนัก (g)",
+        addPortion: "เพิ่ม",
         addFlour: "เพิ่มแป้ง",
         addIng: "เพิ่มส่วนผสมอื่น",
         note: "<strong>Rounding:</strong> ระบบจะปัดเศษเป็นจำนวนเต็ม",
@@ -43,6 +44,7 @@ const translations = {
         thName: "INGREDIENTS",
         thPct: "Baker's %",
         thWeight: "Weight (g)",
+        addPortion: "Add",
         addFlour: "Add Flour",
         addIng: "Add Ingredient",
         note: "<strong>Rounding:</strong> Rounded to nearest integer",
@@ -87,13 +89,16 @@ function changeLang(lang) {
     });
 
     // เปลี่ยนข้อความในปุ่ม
+    const btnPortion = document.getElementById('btn-add-portion');
+    if (btnPortion) btnPortion.innerHTML = `<i class="ti ti-plus"></i> ${translations[lang].addPortion}`;
     document.getElementById('btn-add-flour').innerHTML = `<i class="ti ti-plus"></i> ${translations[lang].addFlour}`;
     document.getElementById('btn-add-ing').innerHTML = `<i class="ti ti-plus"></i> ${translations[lang].addIng}`;
     document.getElementById('btn-summary').innerHTML = `<i class="ti ti-clipboard-list"></i> ${translations[lang].btnSummary}`;
     const btnPrint = document.getElementById('txt-btn-print');
     if (btnPrint) btnPrint.textContent = translations[lang].btnPrint;
 
-    renderTables(); // สั่งวาดตารางใหม่เพื่อเปลี่ยนชื่อวัตถุดิบ
+    renderTables();
+    renderPortions();
     
     document.getElementById('btn-th').classList.toggle('active', lang === 'th');
     document.getElementById('btn-en').classList.toggle('active', lang === 'en');
