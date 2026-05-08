@@ -38,7 +38,7 @@
     /* --- Font Size --- */
     --font-size-sm:   13px;  /* คำอธิบาย, ปุ่มเล็ก */
     --font-size-base: 14px;  /* ข้อความทั่วไป, label */
-    --font-size-md:   15px;  /* input text, weight-display */
+    --font-size-md:   14px;  /* input text, weight-display */
     --font-size-lg:   16px;  /* ตัวเลขรอง, operator */
     --font-size-xl:   18px;  /* ตัวเลขหลักใน input */
 
@@ -93,6 +93,19 @@ body {
     font-family: var(--font-numeric);
     text-align: center; font-variant-numeric: tabular-nums; padding: 4px 0;
 }
+.portion-cost-display {
+    display: flex; flex-direction: column; align-items: flex-end;
+    white-space: nowrap; min-width: 70px;
+}
+.pc-total {
+    font-family: var(--font-numeric); font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold); color: var(--color-text-primary);
+}
+.pc-cpp {
+    font-family: var(--font-numeric); font-size: 11px;
+    color: var(--color-text-light);
+}
+
 .piece-add-row { margin: 6px 0 4px; }
 .piece-add-row button {
     padding: 4px 12px; border: 1px dashed var(--color-accent); background: rgba(255,255,255,0.6);
@@ -147,10 +160,13 @@ table.recipe th {
     font-weight: var(--font-weight-bold);
     padding: 12px 0;
 }
-table.recipe th:nth-child(1), table.recipe td:nth-child(1) { width: 45%; text-align: left; }
-table.recipe th:nth-child(2), table.recipe td:nth-child(2) { width: 25%; text-align: right; }
-table.recipe th:nth-child(3), table.recipe td:nth-child(3) { width: 20%; text-align: right; }
-table.recipe th:nth-child(4), table.recipe td:nth-child(4) { width: 10%; text-align: center; }
+/* name | baker's% | weight(g) | ราคา/กก | ราคา฿ | del */
+table.recipe th:nth-child(1), table.recipe td:nth-child(1) { width: 28%; text-align: left; }
+table.recipe th:nth-child(2), table.recipe td:nth-child(2) { width: 13%; text-align: right; }
+table.recipe th:nth-child(3), table.recipe td:nth-child(3) { width: 13%; text-align: right; }
+table.recipe th:nth-child(4), table.recipe td:nth-child(4) { width: 22%; text-align: right; }
+table.recipe th:nth-child(5), table.recipe td:nth-child(5) { width: 18%; text-align: right; }
+table.recipe th:nth-child(6), table.recipe td:nth-child(6) { width: 6%;  text-align: center; }
 
 table.recipe td {
     padding: 5px 0;
@@ -247,6 +263,55 @@ input.auto-filled {
     color: var(--color-text-primary);
     background-color: var(--color-bg-section);
 }
+
+/* ---- Price display in table (read-only, from price list) ---- */
+.price-display {
+    display: inline-block;
+    font-family: var(--font-numeric);
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    text-align: right;
+    width: 100%;
+}
+
+/* ---- Cost display in table ---- */
+.cost-display {
+    font-family: var(--font-numeric);
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    display: flex; flex-direction: column; align-items: flex-end;
+}
+.ta-r { text-align: right; }
+
+/* ---- Cost total row (below dough total) ---- */
+.cost-total-row {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--color-border-default);
+    font-size: var(--font-size-sm);
+}
+.cost-label { color: var(--color-text-secondary); font-weight: var(--font-weight-semibold); }
+.cost-val {
+    font-family: var(--font-numeric); font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+}
+.cost-sep { color: var(--color-border-default); }
+.pricing-link {
+    margin-left: auto; font-size: var(--font-size-sm); color: var(--color-accent-dark);
+    text-decoration: none; font-weight: var(--font-weight-semibold);
+    display: flex; align-items: center; gap: 3px;
+}
+.pricing-link:hover { color: var(--color-text-primary); }
+
+/* ---- Summary cost row (in modal) ---- */
+.summary-cost-row {
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 10px; padding: 8px 10px;
+    background: var(--color-bg-section);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+.summary-cost-row strong { color: var(--color-text-primary); font-family: var(--font-numeric); }
 
 .formula-note { font-size: 11px; color: var(--color-text-light); margin-top: 20px; line-height: 1.6; }
 
@@ -427,6 +492,140 @@ input.auto-filled {
     transition: background var(--duration-fast);
 }
 .print-btn:hover { background: var(--color-bg-hover); }
+
+/* ===== PRICING PAGE ===== */
+.pricing-wrap { max-width: 600px; margin: 0 auto; padding: 1.5rem 1rem; }
+
+.back-link {
+    display: flex; align-items: center; gap: 5px;
+    color: var(--color-text-subtle); text-decoration: none;
+    font-size: var(--font-size-sm); margin-bottom: 1.25rem;
+}
+.back-link:hover { color: var(--color-text-primary); }
+
+.pricing-header { margin-bottom: 1.5rem; }
+.pricing-header h1 { font-size: 20px; font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: 4px; }
+.pricing-header p  { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+
+/* Master price list */
+.price-master {
+    background: var(--color-bg-section);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-lg);
+    padding: 1rem; margin-bottom: 1.5rem;
+}
+.price-master-title {
+    font-size: var(--font-size-base); font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary); margin-bottom: 10px;
+    display: flex; align-items: center; justify-content: space-between;
+}
+.price-master-title small {
+    font-size: 11px; color: var(--color-text-light); font-weight: var(--font-weight-normal);
+}
+.price-list-table { width: 100%; border-collapse: collapse; font-size: var(--font-size-sm); }
+.price-list-table th {
+    font-size: 11px; font-weight: var(--font-weight-bold); color: var(--color-text-muted);
+    padding: 5px 6px; text-align: left; border-bottom: 1px solid var(--color-border-table);
+    letter-spacing: 0.3px;
+}
+.price-list-table th.ta-r { text-align: right; }
+.price-list-table td { padding: 4px 6px; border-bottom: 1px solid var(--color-border-table); vertical-align: middle; }
+.price-list-table tr:last-child td { border-bottom: none; }
+.pl-name-input {
+    width: 100%; border: none; background: transparent; font-size: var(--font-size-sm);
+    color: var(--color-text-primary); font-family: var(--font-main); padding: 2px 0;
+}
+.pl-name-input:focus { outline: none; border-bottom: 1px solid var(--color-accent); }
+.pl-num-input {
+    width: 80px; border: none; background: var(--color-bg-input);
+    border-radius: var(--radius-sm); padding: 4px 6px;
+    font-family: var(--font-numeric); font-size: var(--font-size-sm);
+    color: var(--color-text-primary);
+}
+.pl-num-input.ta-r { text-align: right; }
+.pl-num-input:focus { outline: none; box-shadow: 0 0 0 1px var(--color-accent); }
+.ppg-cell { font-family: var(--font-numeric); font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+.pl-del-btn { color: var(--color-border-default); border: none; background: none; cursor: pointer; font-size: 16px; }
+.pl-del-btn:hover { color: var(--color-error); }
+.pl-add-btn {
+    margin-top: 8px; padding: 4px 12px;
+    border: 1px dashed var(--color-accent); background: rgba(255,255,255,0.6);
+    border-radius: var(--radius-md); color: var(--color-text-primary);
+    cursor: pointer; font-size: var(--font-size-sm); font-family: var(--font-main);
+    display: flex; align-items: center; gap: 5px; transition: background var(--duration-fast);
+}
+.pl-add-btn:hover { background: var(--color-bg-hover); }
+.pl-action-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.pl-reset-btn {
+    padding: 4px 12px;
+    border: 1px dashed var(--color-border-default); background: transparent;
+    border-radius: var(--radius-md); color: var(--color-text-muted);
+    cursor: pointer; font-size: var(--font-size-sm); font-family: var(--font-main);
+    display: flex; align-items: center; gap: 5px; transition: all var(--duration-fast);
+}
+.pl-reset-btn:hover { border-color: var(--color-accent); color: var(--color-text-primary); }
+
+/* Summary cards */
+.summary-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
+.card {
+    background: var(--color-bg-section);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+}
+.card-label { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: 4px; }
+.card-value { font-family: var(--font-numeric); font-size: 22px; font-weight: var(--font-weight-bold); color: var(--color-text-primary); }
+.card-sub   { font-size: 11px; color: var(--color-text-light); margin-top: 2px; }
+
+/* Sell / Profit calculator */
+.sell-section {
+    background: var(--color-bg-section);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-lg);
+    padding: 1rem; margin-bottom: 1.5rem;
+}
+.sell-title { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: 10px; }
+.sell-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.sell-row label { font-size: var(--font-size-sm); color: var(--color-text-secondary); white-space: nowrap; }
+.sell-input {
+    width: 100px; font-family: var(--font-numeric); font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold); text-align: center;
+    color: var(--color-text-primary); border: 1px solid var(--color-accent);
+    border-radius: var(--radius-sm); padding: 5px 8px;
+    background: var(--color-bg-page);
+}
+.sell-input:focus { outline: none; box-shadow: 0 0 0 2px var(--color-accent); }
+.profit-row {
+    display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px;
+    padding-top: 10px; border-top: 1px dashed var(--color-border-default);
+}
+.profit-item { flex: 1; min-width: 120px; }
+.profit-label { font-size: 11px; color: var(--color-text-light); margin-bottom: 2px; }
+.profit-val { font-family: var(--font-numeric); font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-text-primary); }
+.profit-val.positive { color: #27a05a; }
+.profit-val.negative { color: var(--color-error); }
+
+/* Cost breakdown table */
+.section-title { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-secondary); letter-spacing: 0.5px; margin: 1.25rem 0 8px; }
+.cost-table { width: 100%; border-collapse: collapse; font-size: var(--font-size-sm); }
+.cost-table th {
+    font-size: 11px; font-weight: var(--font-weight-bold); color: var(--color-text-muted);
+    padding: 6px 8px; text-align: left; border-bottom: 2px solid var(--color-border-table);
+    letter-spacing: 0.3px;
+}
+.cost-table th:not(:first-child) { text-align: right; }
+.cost-table td { padding: 7px 8px; border-bottom: 1px solid var(--color-border-table); }
+.cost-table td:not(:first-child) { text-align: right; font-family: var(--font-numeric); }
+.cost-table tr:last-child td { border-bottom: none; }
+.cost-table tr.flour-item td { background: var(--color-bg-section); font-weight: var(--font-weight-semibold); }
+.cost-table tfoot td {
+    padding-top: 10px; font-weight: var(--font-weight-bold);
+    border-top: 2px solid var(--color-accent); border-bottom: none;
+    font-family: var(--font-numeric);
+}
+.cost-table tfoot td:first-child { font-family: var(--font-main); }
+
+.no-data { text-align: center; padding: 2rem; color: var(--color-text-light); font-size: var(--font-size-sm); }
 
 /* ---- Print styles ---- */
 @media print {

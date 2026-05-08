@@ -1,6 +1,5 @@
 let portions = [
     { id: 1, qty: 24, weight: 50 },
-   
 ];
 
 function renderPortions() {
@@ -35,6 +34,7 @@ function renderPortions() {
                     <div class="piece-sub-val" id="sub-${p.id}">${subtotal.toLocaleString()} g</div>
                 </div>
                 <button class="del-btn" style="align-self:flex-end;margin-bottom:5px" onclick="removePortion(${p.id})" ${hideDel}>×</button>
+                <div class="portion-cost-display" id="portion-cost-${p.id}" style="align-self:flex-end;margin-bottom:6px"></div>
             `;
         } else {
             row.innerHTML = `
@@ -50,6 +50,7 @@ function renderPortions() {
                     <div class="piece-sub-val" id="sub-${p.id}">${subtotal.toLocaleString()} g</div>
                 </div>
                 <button class="del-btn" onclick="removePortion(${p.id})" ${hideDel}>×</button>
+                <div class="portion-cost-display" id="portion-cost-${p.id}" style="align-self:center"></div>
             `;
         }
         container.appendChild(row);
@@ -79,33 +80,52 @@ function updatePortion(id, field, val) {
 }
 
 let flours = [
-    { id: 1, name: 'Bread Flour', pct: 100, locked: true },
+    { id: 1, name: 'Bread Flour', pct: 100, locked: true, price: 0 },
 ];
 
 let ingredients = [
-    { id: 3, name: 'Yeast', pct: 1.8 },
-    { id: 4, name: 'Salt', pct: 1.5 },
-    { id: 5, name: 'Milk Powder', pct: 4 },
-    { id: 6, name: 'Sugar', pct: 10 },
-    { id: 7, name: 'Milk', pct: 25 },
-    { id: 8, name: 'Water', pct: 50 },
-    { id: 9, name: 'Butter', pct: 9 }
+    { id: 3, name: 'Yeast',       pct: 1.8,  price: 0 },
+    { id: 4, name: 'Salt',        pct: 1.5,  price: 0 },
+    { id: 5, name: 'Milk Powder', pct: 4,    price: 0 },
+    { id: 6, name: 'Sugar',       pct: 10,   price: 0 },
+    { id: 7, name: 'Milk',        pct: 25,   price: 0 },
+    { id: 8, name: 'Water',       pct: 50,   price: 0 },
+    { id: 9, name: 'Butter',      pct: 9,    price: 0 }
 ];
+
+function refreshPriceDatalist() {
+    let dl = document.getElementById('price-names');
+    if (!dl) {
+        dl = document.createElement('datalist');
+        dl.id = 'price-names';
+        document.body.appendChild(dl);
+    }
+    dl.innerHTML = Object.keys(getPriceList()).map(n => `<option value="${n}">`).join('');
+}
+
+// item.price stores ฿ per gram (pricePerGram)
+function autoFillPrices() {
+    const priceList = getPriceList();
+    [...flours, ...ingredients].forEach(item => {
+        const entry = priceList[item.name];
+        if (!item.price && entry?.pricePerGram > 0) {
+            item.price = entry.pricePerGram;
+        }
+    });
+}
 
 function roundInteger(value) {
     return Math.round(value);
 }
 
-// Split remaining % (100 - locked sum) equally among unlocked flours.
-// Last unlocked absorbs rounding remainder so total stays exactly 100.
 function redistributeAutoFlours() {
-    const locked = flours.filter(f => f.locked);
+    const locked   = flours.filter(f => f.locked);
     const unlocked = flours.filter(f => !f.locked);
     if (unlocked.length === 0) return;
 
     const lockedSum = locked.reduce((s, f) => s + f.pct, 0);
     const remaining = 100 - lockedSum;
-    const share = Math.round((remaining / unlocked.length) * 10) / 10;
+    const share     = Math.round((remaining / unlocked.length) * 10) / 10;
 
     for (let i = 0; i < unlocked.length - 1; i++) {
         unlocked[i].pct = Math.max(0, share);
@@ -114,7 +134,6 @@ function redistributeAutoFlours() {
     unlocked[unlocked.length - 1].pct = Math.max(0, Math.round((remaining - distributed) * 10) / 10);
 }
 
-// Update only the DOM inputs of auto-filled (unlocked) flours — keeps focus on the typed field.
 function syncAutoFlourInputs() {
     flours.filter(f => !f.locked).forEach(f => {
         const el = document.getElementById(`pct-${f.id}`);
@@ -125,19 +144,19 @@ function syncAutoFlourInputs() {
 function updateFlourPct(id, val) {
     const item = flours.find(x => x.id === id);
     if (!item) return;
-
-    item.pct = parseFloat(val) || 0;
+    item.pct    = parseFloat(val) || 0;
     item.locked = true;
-
     const el = document.getElementById(`pct-${id}`);
     if (el) el.classList.remove('auto-filled');
-
     redistributeAutoFlours();
     syncAutoFlourInputs();
     recalculateWeights();
 }
 
 function renderTables() {
+    refreshPriceDatalist();
+    autoFillPrices();
+
     const fBody = document.getElementById('flourBody');
     if (fBody) fBody.innerHTML = '';
     flours.forEach(f => fBody.appendChild(createRow(f, 'flour')));
@@ -168,9 +187,11 @@ function createRow(item, type) {
     }
 
     tr.innerHTML = `
-        <td><input type="text" value="${displayName}" oninput="updateData('${type}', ${item.id}, 'name', this.value)"></td>
+        <td><input type="text" value="${displayName}" list="price-names" oninput="updateData('${type}', ${item.id}, 'name', this.value)"></td>
         <td class="num-cell">${pctInputHtml}</td>
         <td class="num-cell"><span id="weight-${item.id}" class="weight-display">0</span></td>
+        <td class="num-cell"><span id="price-${item.id}" class="price-display">${item.price ? item.price.toFixed(3) : '—'}</span></td>
+        <td class="num-cell"><span id="cost-${item.id}" class="cost-display">—</span></td>
         <td style="text-align:center"><button class="del-btn" onclick="removeItem('${type}', ${item.id})">×</button></td>
     `;
     return tr;
@@ -179,16 +200,26 @@ function createRow(item, type) {
 function updateData(type, id, field, val) {
     const list = (type === 'flour') ? flours : ingredients;
     const item = list.find(x => x.id === id);
-    if (item) {
-        item[field] = (field === 'pct') ? (parseFloat(val) || 0) : val;
-        recalculateWeights();
+    if (!item) return;
+
+    item[field] = field === 'pct' ? (parseFloat(val) || 0) : val;
+
+    // เมื่อแก้ชื่อ → ดึงราคาจาก price list อัตโนมัติ
+    if (field === 'name') {
+        const entry = getPriceList()[val];
+        item.price = entry?.pricePerGram || 0;
+        const priceEl = document.getElementById(`price-${id}`);
+        if (priceEl) priceEl.textContent = item.price ? item.price.toFixed(3) : '—';
     }
+
+    recalculateWeights();
 }
 
 function recalculateWeights() {
-    const portionsTotal = portions.reduce((s, p) => s + p.qty * p.weight, 0);
-    const offset = parseFloat(document.getElementById('doughOffset')?.value) || 0;
+    const portionsTotal  = portions.reduce((s, p) => s + p.qty * p.weight, 0);
+    const offset         = parseFloat(document.getElementById('doughOffset')?.value) || 0;
     const totalDoughGoal = portionsTotal + offset;
+    const totalPieces    = portions.reduce((s, p) => s + p.qty, 0);
 
     const totalEl = document.getElementById('totalDoughDisplay');
     if (totalEl) totalEl.textContent = portionsTotal.toLocaleString() + ' g';
@@ -204,10 +235,9 @@ function recalculateWeights() {
 
     if (sumEl) {
         sumEl.textContent = flourSum.toFixed(1) + '%';
-        // Show red total when only 2 flours and they don't reach 100%
-        const twoFlourMismatch = flours.length === 2 && Math.abs(flourSum - 100) >= 0.01;
-        sumEl.style.color = twoFlourMismatch ? '#e24b4a' : '';
-        sumEl.style.fontWeight = twoFlourMismatch ? 'bold' : '';
+        const mismatch = flours.length === 2 && Math.abs(flourSum - 100) >= 0.01;
+        sumEl.style.color      = mismatch ? '#e24b4a' : '';
+        sumEl.style.fontWeight = mismatch ? 'bold'    : '';
     }
 
     if (Math.abs(flourSum - 100) < 0.01) {
@@ -222,24 +252,56 @@ function recalculateWeights() {
     }
 
     const totalFlourBase = totalDoughGoal / ((100 + otherSum) / 100);
+    let totalCost = 0;
 
-    flours.forEach(f => {
-        const rawW = (totalFlourBase * f.pct) / 100;
-        const el = document.getElementById(`weight-${f.id}`);
-        if (el) el.textContent = roundInteger(rawW);
+    function updateRowCost(item) {
+        const rawW     = (totalFlourBase * item.pct) / 100;
+        const weightEl = document.getElementById(`weight-${item.id}`);
+        if (weightEl) weightEl.textContent = roundInteger(rawW);
+
+        // item.price is ฿/gram
+        const cost  = rawW * (item.price || 0);
+        totalCost  += cost;
+
+        const costEl = document.getElementById(`cost-${item.id}`);
+        if (!costEl) return;
+        if ((item.price || 0) > 0) {
+            const cpp = totalPieces > 0 ? cost / totalPieces : 0;
+            costEl.innerHTML =
+                `<span class="cost-total-val">฿${cost.toFixed(2)}</span>` +
+                `<small class="cost-per-piece">฿${cpp.toFixed(2)}/ก้อน</small>`;
+        } else {
+            costEl.textContent = '—';
+        }
+    }
+
+    flours.forEach(updateRowCost);
+    ingredients.forEach(updateRowCost);
+
+    const totalCostEl = document.getElementById('totalCostDisplay');
+    if (totalCostEl) totalCostEl.textContent = '฿' + totalCost.toFixed(2);
+
+    portions.forEach(p => {
+        const el = document.getElementById(`portion-cost-${p.id}`);
+        if (!el) return;
+        if (totalCost > 0 && totalDoughGoal > 0) {
+            const pCost = totalCost * (p.qty * p.weight) / totalDoughGoal;
+            const pCpp  = p.qty > 0 ? pCost / p.qty : 0;
+            el.innerHTML = `<span class="pc-total">฿${pCost.toFixed(2)}</span><span class="pc-cpp">฿${pCpp.toFixed(2)}/ก้อน</span>`;
+        } else {
+            el.innerHTML = '';
+        }
     });
-    ingredients.forEach(i => {
-        const rawW = (totalFlourBase * i.pct) / 100;
-        const el = document.getElementById(`weight-${i.id}`);
-        if (el) el.textContent = roundInteger(rawW);
-    });
+
+    saveData();
 }
 
 function addItem(type) {
     const newItem = {
-        id: Date.now(),
-        name: (type === 'flour' ? 'ระบุชื่อแป้ง' : 'ระบุชื่อส่วนผสม'),
-        pct: 0,
+        id:     Date.now(),
+        name:   (type === 'flour' ? 'ระบุชื่อแป้ง' : 'ระบุชื่อส่วนผสม'),
+        pct:    0,
+        price:  0,
         locked: false
     };
     if (type === 'flour') {
@@ -261,43 +323,73 @@ function removeItem(type, id) {
     renderTables();
 }
 
+function saveData() {
+    try {
+        localStorage.setItem('bakersCalcData', JSON.stringify({
+            portions, flours, ingredients, timestamp: Date.now()
+        }));
+    } catch(e) {}
+}
+
+initDefaultPrices();
 renderTables();
 renderPortions();
 
 function showSummary() {
-    const portionsTotal = portions.reduce((s, p) => s + p.qty * p.weight, 0);
-    const offset = parseFloat(document.getElementById('doughOffset')?.value) || 0;
-    const totalDough = portionsTotal + offset;
+    const portionsTotal  = portions.reduce((s, p) => s + p.qty * p.weight, 0);
+    const offset         = parseFloat(document.getElementById('doughOffset')?.value) || 0;
+    const totalDough     = portionsTotal + offset;
+    const totalPieces    = portions.reduce((s, p) => s + p.qty, 0);
 
-    const otherSum = ingredients.reduce((s, i) => s + i.pct, 0);
+    const otherSum       = ingredients.reduce((s, i) => s + i.pct, 0);
     const totalFlourBase = totalDough / ((100 + otherSum) / 100);
 
-    const t = (typeof translations !== 'undefined') ? translations[currentLang] : {};
+    const t       = (typeof translations !== 'undefined') ? translations[currentLang] : {};
     const getName = item => (t[item.name] || item.name);
 
-    let flourRows = flours.map(f => {
-        const w = Math.round((totalFlourBase * f.pct) / 100);
-        return `<tr class="s-flour"><td>${getName(f)}</td><td>${f.pct}%</td><td>${w.toLocaleString()} g</td></tr>`;
-    }).join('');
+    let totalCost = 0;
 
-    let ingRows = ingredients.map(i => {
-        const w = Math.round((totalFlourBase * i.pct) / 100);
-        return `<tr><td>${getName(i)}</td><td>${i.pct}%</td><td>${w.toLocaleString()} g</td></tr>`;
-    }).join('');
+    const makeRow = (item, cls) => {
+        const w    = Math.round((totalFlourBase * item.pct) / 100);
+        const cost = w * (item.price || 0); // ฿/g
+        totalCost += cost;
+        const cpp     = totalPieces > 0 ? cost / totalPieces : 0;
+        const costStr = (item.price || 0) > 0
+            ? `฿${cost.toFixed(2)}<br><small style="color:var(--color-text-light)">฿${cpp.toFixed(2)}/ก้อน</small>`
+            : '—';
+        return `<tr class="${cls}"><td>${getName(item)}</td><td>${item.pct}%</td><td>${w.toLocaleString()} g</td><td>${costStr}</td></tr>`;
+    };
 
-    const yieldLabel = t.yieldLabel || 'Yield';
-    const totalLabel = t.totalLabel || 'Total';
-    const thName = t.thName || 'Ingredient';
-    const thPct = t.thPct || "Baker's %";
-    const thWeight = t.thWeight || 'Weight (g)';
+    const flourRows = flours.map(f => makeRow(f, 's-flour')).join('');
+    const ingRows   = ingredients.map(i => makeRow(i, '')).join('');
 
+    const thCost     = t.thCost    || 'ราคา (฿)';
     const yieldParts = portions.map(p => `${p.qty} × ${p.weight} g`).join(' + ');
+    const cpp_total  = totalPieces > 0 ? totalCost / totalPieces : 0;
+
+    const costSummary = totalCost > 0 ? `
+        <div class="summary-cost-row">
+            <span>ต้นทุนรวม: <strong>฿${totalCost.toFixed(2)}</strong></span>
+            <span>เฉลี่ย/ก้อน: <strong>฿${cpp_total.toFixed(2)}</strong></span>
+        </div>` : '';
+
     document.getElementById('summaryContent').innerHTML = `
-        <div class="summary-yield">${yieldLabel}: <strong>${yieldParts} = ${totalDough.toLocaleString()} g</strong></div>
+        <div class="summary-yield">
+            ${t.yieldLabel || 'Yield'}: <strong>${yieldParts} = ${totalDough.toLocaleString()} g</strong>
+        </div>
+        ${costSummary}
         <table class="summary-table">
-            <thead><tr><th>${thName}</th><th>${thPct}</th><th>${thWeight}</th></tr></thead>
+            <thead><tr>
+                <th>${t.thName || 'Ingredient'}</th>
+                <th>${t.thPct || "Baker's %"}</th>
+                <th>${t.thWeight || 'Weight (g)'}</th>
+                <th>${thCost}</th>
+            </tr></thead>
             <tbody>${flourRows}${ingRows}</tbody>
-            <tfoot><tr><td colspan="3" class="summary-total">${totalLabel}: ${totalDough.toLocaleString()} g</td></tr></tfoot>
+            <tfoot><tr>
+                <td colspan="3" class="summary-total">${t.totalLabel || 'Total'}: ${totalDough.toLocaleString()} g</td>
+                <td class="summary-total">${totalCost > 0 ? '฿' + totalCost.toFixed(2) : '—'}</td>
+            </tr></tfoot>
         </table>`;
 
     document.getElementById('summaryModal').style.display = 'flex';
