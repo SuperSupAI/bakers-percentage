@@ -186,9 +186,14 @@ function updateData(type, id, field, val) {
 }
 
 function recalculateWeights() {
-    const totalDoughGoal = portions.reduce((s, p) => s + p.qty * p.weight, 0);
+    const portionsTotal = portions.reduce((s, p) => s + p.qty * p.weight, 0);
+    const offset = parseFloat(document.getElementById('doughOffset')?.value) || 0;
+    const totalDoughGoal = portionsTotal + offset;
+
     const totalEl = document.getElementById('totalDoughDisplay');
-    if (totalEl) totalEl.textContent = totalDoughGoal.toLocaleString() + ' g';
+    if (totalEl) totalEl.textContent = portionsTotal.toLocaleString() + ' g';
+    const finalEl = document.getElementById('totalDoughFinal');
+    if (finalEl) finalEl.textContent = totalDoughGoal.toLocaleString() + ' g';
 
     const flourSum = flours.reduce((s, f) => s + f.pct, 0);
     const otherSum = ingredients.reduce((s, i) => s + i.pct, 0);
@@ -206,8 +211,8 @@ function recalculateWeights() {
     }
 
     if (Math.abs(flourSum - 100) < 0.01) {
-        msgEl.innerHTML = '<span style="color:#27500A; font-weight:bold;">ครบ 100% แล้ว</span>';
-        barEl.style.borderLeftColor = '#97C459';
+        msgEl.innerHTML = '<span style="color:#3D2409; font-weight:bold;">ครบ 100% แล้ว</span>';
+        barEl.style.borderLeftColor = '#C4956A';
     } else if (flourSum < 100) {
         msgEl.innerHTML = `ยังขาดอีก <b>${(100 - flourSum).toFixed(1)}%</b>`;
         barEl.style.borderLeftColor = '#ccc';
@@ -260,7 +265,9 @@ renderTables();
 renderPortions();
 
 function showSummary() {
-    const totalDough = portions.reduce((s, p) => s + p.qty * p.weight, 0);
+    const portionsTotal = portions.reduce((s, p) => s + p.qty * p.weight, 0);
+    const offset = parseFloat(document.getElementById('doughOffset')?.value) || 0;
+    const totalDough = portionsTotal + offset;
 
     const otherSum = ingredients.reduce((s, i) => s + i.pct, 0);
     const totalFlourBase = totalDough / ((100 + otherSum) / 100);

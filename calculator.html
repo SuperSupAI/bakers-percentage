@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">    <title>Baker's Percentage Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">    <title>Baker's Percentage Calculator</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="style.css">
@@ -36,7 +36,12 @@
         </div>
         <div class="portion-total-row">
             <span id="txt-total-goal">โดว์รวมที่ต้องการ</span>
-            <div class="piece-result-val" id="totalDoughDisplay">2,100 g</div>
+            <span class="total-plain" id="totalDoughDisplay">2,100 g</span>
+            <span class="total-op">+</span>
+            <input type="number" id="doughOffset" value="15" min="0" class="offset-input" oninput="recalculateWeights()">
+            <span class="total-op">g</span>
+            <span class="total-op">=</span>
+            <div class="piece-result-val" id="totalDoughFinal">2,100 g</div>
         </div>
     </div>
 
