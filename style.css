@@ -565,6 +565,39 @@ input.auto-filled {
 }
 .pl-reset-btn:hover { border-color: var(--color-accent); color: var(--color-text-primary); }
 
+/* ---- Export / Import ---- */
+.pl-io-row {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    margin-top: 8px; padding-top: 8px;
+    border-top: 1px dashed var(--color-border-default);
+}
+.pl-export-btn, .pl-import-btn {
+    padding: 4px 12px;
+    border-radius: var(--radius-md);
+    cursor: pointer; font-size: var(--font-size-sm); font-family: var(--font-main);
+    display: flex; align-items: center; gap: 5px;
+    transition: all var(--duration-fast);
+}
+.pl-export-btn {
+    border: 1px solid var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-bg-page);
+    font-weight: var(--font-weight-semibold);
+}
+.pl-export-btn:hover { background: var(--color-accent-dark); border-color: var(--color-accent-dark); }
+.pl-import-btn {
+    border: 1px solid var(--color-border-default);
+    background: transparent;
+    color: var(--color-text-secondary);
+}
+.pl-import-btn:hover { border-color: var(--color-accent); color: var(--color-text-primary); }
+.import-msg {
+    font-size: var(--font-size-sm); padding: 3px 8px;
+    border-radius: var(--radius-sm);
+}
+.import-msg.success { color: #27a05a; background: #e6f9ef; }
+.import-msg.error   { color: var(--color-error); background: var(--color-error-light); }
+
 /* Summary cards */
 .summary-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
 .card {

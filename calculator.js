@@ -281,12 +281,20 @@ function recalculateWeights() {
     const totalCostEl = document.getElementById('totalCostDisplay');
     if (totalCostEl) totalCostEl.textContent = '฿' + totalCost.toFixed(2);
 
-    portions.forEach(p => {
+    const roundedTotal = parseFloat(totalCost.toFixed(2));
+    let allocated = 0;
+    portions.forEach((p, idx) => {
         const el = document.getElementById(`portion-cost-${p.id}`);
         if (!el) return;
-        if (totalCost > 0 && totalDoughGoal > 0) {
-            const pCost = totalCost * (p.qty * p.weight) / totalDoughGoal;
-            const pCpp  = p.qty > 0 ? pCost / p.qty : 0;
+        if (totalCost > 0 && portionsTotal > 0) {
+            let pCost;
+            if (idx === portions.length - 1) {
+                pCost = parseFloat((roundedTotal - allocated).toFixed(2));
+            } else {
+                pCost = parseFloat((totalCost * (p.qty * p.weight) / portionsTotal).toFixed(2));
+                allocated += pCost;
+            }
+            const pCpp = p.qty > 0 ? pCost / p.qty : 0;
             el.innerHTML = `<span class="pc-total">฿${pCost.toFixed(2)}</span><span class="pc-cpp">฿${pCpp.toFixed(2)}/ก้อน</span>`;
         } else {
             el.innerHTML = '';

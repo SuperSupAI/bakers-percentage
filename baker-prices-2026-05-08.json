@@ -1,0 +1,56 @@
+{
+  "_exported": "2026-05-08T09:55:40.899Z",
+  "_version": 1,
+  "prices": {
+    "Bread Flour": {
+      "qty": 1000,
+      "price": 37,
+      "pricePerGram": 0.037
+    },
+    "Cake Flour": {
+      "qty": 1000,
+      "price": 50,
+      "pricePerGram": 0.05
+    },
+    "Whole Wheat Flour": {
+      "qty": 1000,
+      "price": 55,
+      "pricePerGram": 0.055
+    },
+    "Yeast": {
+      "qty": 500,
+      "price": 130,
+      "pricePerGram": 0.26
+    },
+    "Salt": {
+      "qty": 1000,
+      "price": 10,
+      "pricePerGram": 0.01
+    },
+    "Milk Powder": {
+      "qty": 1000,
+      "price": 142,
+      "pricePerGram": 0.142
+    },
+    "Sugar": {
+      "qty": 1000,
+      "price": 27,
+      "pricePerGram": 0.027
+    },
+    "Milk": {
+      "qty": 830,
+      "price": 48.75,
+      "pricePerGram": 0.058735
+    },
+    "Water": {
+      "qty": 1000,
+      "price": 0,
+      "pricePerGram": 0
+    },
+    "Butter": {
+      "qty": 1000,
+      "price": 400,
+      "pricePerGram": 0.4
+    }
+  }
+}
