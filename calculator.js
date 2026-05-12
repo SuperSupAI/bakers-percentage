@@ -89,7 +89,7 @@ let ingredients = [
     { id: 5, name: 'Milk Powder', pct: 4,    price: 0 },
     { id: 6, name: 'Sugar',       pct: 10,   price: 0 },
     { id: 7, name: 'Milk',        pct: 25,   price: 0 },
-    { id: 8, name: 'Water',       pct: 50,   price: 0 },
+    { id: 8, name: 'Water',       pct: 49,   price: 0 },
     { id: 9, name: 'Butter',      pct: 9,    price: 0 }
 ];
 
