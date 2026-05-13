@@ -662,6 +662,267 @@ input.auto-filled {
 
 .no-data { text-align: center; padding: 2rem; color: var(--color-text-light); font-size: var(--font-size-sm); }
 
+/* ===== TOP BAR (bread.html nav) ===== */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.top-bar .lang-switch { margin-bottom: 0; }
+.top-bar-link {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-subtle);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.top-bar-link:hover { color: var(--color-accent-dark); }
+
+/* ===== SOURDOUGH PAGE ===== */
+
+.sd-wrap {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 3rem;
+    font-family: var(--font-main);
+}
+
+.sd-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: var(--font-size-sm);
+}
+.sd-nav a { color: var(--color-text-subtle); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+.sd-nav a:hover { color: var(--color-accent-dark); }
+.sd-nav-sep { color: var(--color-border-default); font-size: 12px; }
+
+/* Input card */
+.sd-inputs-card {
+    background: var(--color-bg-section);
+    border: 1px solid var(--color-border-table);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    margin-bottom: 16px;
+}
+.sd-input-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px 16px;
+}
+@media (max-width: 520px) {
+    .sd-input-grid { grid-template-columns: 1fr 1fr; }
+}
+.sd-field label {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: 4px;
+}
+.sd-field-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.sd-field-row input {
+    flex: 1;
+    min-width: 0;
+    padding: 5px 8px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-numeric);
+    font-size: var(--font-size-md);
+    color: var(--color-text-primary);
+    background: var(--color-bg-page);
+    text-align: right;
+    box-sizing: border-box;
+}
+.sd-field-row input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-accent-light);
+}
+.sd-field-row input::-webkit-inner-spin-button,
+.sd-field-row input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.sd-unit { font-size: var(--font-size-sm); color: var(--color-text-light); flex-shrink: 0; }
+
+.sd-pff { display: flex; flex-direction: column; gap: 2px; }
+.sd-pff-val {
+    font-family: var(--font-numeric);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+}
+.sd-pff-pct { font-size: var(--font-size-sm); color: var(--color-text-light); }
+
+/* Recipe title (inside sd-left) */
+.sd-recipe-title {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-accent-dark);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+.sd-section-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.sd-section-label-mt { margin-top: 14px; }
+.sd-flour-sum { font-family: var(--font-numeric); font-size: 12px; color: var(--color-text-secondary); }
+.sd-flour-sum-err { color: var(--color-error) !important; font-weight: var(--font-weight-bold); }
+
+.sd-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--color-border-table);
+}
+.sd-row:last-of-type { border-bottom: none; }
+
+.sd-name-input {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--font-main);
+    font-size: var(--font-size-base);
+    color: var(--color-text-primary);
+    border: none;
+    background: transparent;
+    padding: 2px 4px;
+    vertical-align: middle;
+}
+.sd-name-input:focus {
+    outline: none;
+    background: var(--color-bg-input);
+    border-radius: var(--radius-sm);
+}
+.sd-name-fixed { flex: 1; font-size: var(--font-size-base); color: var(--color-text-secondary); padding: 2px 4px; }
+
+.sd-pct-cell { display: inline-flex; align-items: center; gap: 2px; flex-shrink: 0; vertical-align: middle; }
+.sd-pct-input {
+    width: 58px;
+    text-align: right;
+    font-family: var(--font-numeric);
+    font-size: var(--font-size-base);
+    padding: 3px 6px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-primary);
+    background: var(--color-bg-input);
+    box-sizing: border-box;
+}
+.sd-pct-input:focus { outline: none; border-color: var(--color-accent); }
+.sd-pct-input::-webkit-inner-spin-button,
+.sd-pct-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.sd-pct-sym { font-size: var(--font-size-sm); color: var(--color-text-light); width: 14px; }
+
+.sd-del-btn { color: var(--color-text-placeholder); cursor: pointer; border: none; background: none; font-size: 18px; line-height: 1; padding: 0; width: 24px; text-align: center; flex-shrink: 0; vertical-align: middle; }
+.sd-del-btn:hover { color: var(--color-error); }
+.sd-del-placeholder { width: 24px; flex-shrink: 0; }
+
+.sd-add-row { padding: 6px 0 2px; }
+.sd-add-btn {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-subtle);
+    background: none;
+    border: 1px dashed var(--color-border-default);
+    border-radius: var(--radius-md);
+    padding: 4px 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.sd-add-btn:hover { background: var(--color-bg-hover); border-color: var(--color-accent); color: var(--color-accent-dark); }
+
+/* 2-column main layout */
+.sd-main-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: start;
+}
+@media (max-width: 600px) {
+    .sd-main-layout { grid-template-columns: 1fr; }
+}
+
+/* Each column stacks its sections vertically */
+.sd-col {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* Recipe editor panel */
+.sd-left {
+    background: var(--color-bg-page);
+    border: 1px solid var(--color-border-table);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+}
+
+.sd-output-section {
+    background: var(--color-bg-page);
+    border: 1px solid var(--color-border-table);
+    border-radius: var(--radius-lg);
+    padding: 12px 14px;
+}
+.sd-output-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-secondary);
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+}
+.sd-result-table { width: 100%; border-collapse: collapse; font-size: var(--font-size-base); }
+.sd-result-table th {
+    font-size: 16px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-muted);
+    padding: 4px 6px;
+    text-align: left;
+    border-bottom: 2px solid var(--color-border-table);
+}
+.sd-result-table td { padding: 5px 6px; border-bottom: 1px solid var(--color-border-table); color: var(--color-text-primary); }
+.sd-result-table td:not(:first-child) { text-align: right; font-family: var(--font-numeric); }
+.sd-result-table tr:last-child td { border-bottom: none; }
+.sd-result-table tr.sd-flour-row td { background: var(--color-bg-section); font-style: italic; }
+.sd-result-table tfoot td {
+    font-weight: var(--font-weight-bold);
+    border-top: 2px solid var(--color-accent);
+    border-bottom: none;
+    padding-top: 7px;
+    font-family: var(--font-numeric);
+}
+.sd-result-table tfoot td:first-child { font-family: var(--font-main); }
+.sd-ferment-gap { height: 14px; }
+
+.sd-ferment-pct-wrap { display: inline-flex; align-items: center; gap: 2px; justify-content: flex-end; }
+.sd-ferment-pct {
+    width: 52px;
+    text-align: right;
+    font-family: var(--font-numeric);
+    font-size: var(--font-size-base);
+    padding: 2px 5px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-input);
+    color: var(--color-text-primary);
+    box-sizing: border-box;
+}
+.sd-ferment-pct:focus { outline: none; border-color: var(--color-accent); }
+.sd-ferment-pct::-webkit-inner-spin-button,
+.sd-ferment-pct::-webkit-outer-spin-button { -webkit-appearance: none; }
+.sd-ferment-pct-sym { font-size: var(--font-size-sm); color: var(--color-text-light); }
+
 /* ---- Mobile: hide ฿/g column, expand remaining columns ---- */
 @media (max-width: 520px) {
     table.recipe th:nth-child(4),

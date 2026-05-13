@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Sourdough — Baker's Calculator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="sd-wrap">
+
+    <div class="sd-nav">
+        <a href="bread.html"><i class="ti ti-arrow-left"></i> Baker's %</a>
+        <span class="sd-nav-sep">|</span>
+        <a href="pricing.html"><i class="ti ti-calculator"></i> ต้นทุน</a>
+    </div>
+
+    <div class="header">
+        <h1>Sourdough Calculator</h1>
+        <p>Total ingredients &middot; Ferments &middot; Main dough recipe</p>
+    </div>
+
+    <!-- ===== TOP INPUTS ===== -->
+    <div class="sd-inputs-card">
+        <div class="sd-input-grid">
+            <div class="sd-field">
+                <label>Dough weight</label>
+                <div class="sd-field-row">
+                    <input type="number" id="sdDoughWeight" value="650" min="1" oninput="sdCalc()">
+                    <span class="sd-unit">g</span>
+                </div>
+            </div>
+            <div class="sd-field">
+                <label>Levain</label>
+                <div class="sd-field-row">
+                    <input type="number" id="sdLevainPct" value="20" min="1" max="200" step="0.5" oninput="sdCalc()">
+                    <span class="sd-unit">%</span>
+                </div>
+            </div>
+            <div class="sd-field">
+                <label>Scale</label>
+                <div class="sd-field-row">
+                    <input type="number" id="sdScale" value="2" min="1" step="1" oninput="sdCalc()">
+                    <span class="sd-unit">pcs</span>
+                </div>
+            </div>
+            <div class="sd-field">
+                <label>Pre-fermented flour</label>
+                <div class="sd-pff">
+                    <span id="sdPffG" class="sd-pff-val">— g</span>
+                    <span id="sdPffPct" class="sd-pff-pct">—</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 2-COLUMN LAYOUT ===== -->
+    <div class="sd-main-layout">
+
+        <!-- LEFT: Recipe editor + Total ingredients -->
+        <div class="sd-col">
+            <div class="sd-left">
+                <div class="sd-recipe-title">Recipe</div>
+
+                <div class="sd-section-label">
+                    Flour blend
+                    <small id="sdFlourSum" class="sd-flour-sum">100%</small>
+                </div>
+                <div id="sdFlourRows"></div>
+                <div class="sd-add-row">
+                    <button class="sd-add-btn" onclick="sdAddFlour()">
+                        <i class="ti ti-plus"></i> Add flour
+                    </button>
+                </div>
+
+                <div class="sd-section-label sd-section-label-mt">Baker's %</div>
+                <div class="sd-row">
+                    <span class="sd-name-fixed">Water</span>
+                    <div class="sd-pct-cell">
+                        <input class="sd-pct-input" type="number" id="sdWaterPct" value="72" min="0" step="0.5" oninput="sdCalc()">
+                        <span class="sd-pct-sym">%</span>
+                    </div>
+                    <span class="sd-del-placeholder"></span>
+                </div>
+                <div class="sd-row">
+                    <span class="sd-name-fixed">Salt</span>
+                    <div class="sd-pct-cell">
+                        <input class="sd-pct-input" type="number" id="sdSaltPct" value="2.0" min="0" step="0.1" oninput="sdCalc()">
+                        <span class="sd-pct-sym">%</span>
+                    </div>
+                    <span class="sd-del-placeholder"></span>
+                </div>
+                <div id="sdInclusionRows"></div>
+                <div class="sd-add-row">
+                    <button class="sd-add-btn" onclick="sdAddInclusion()">
+                        <i class="ti ti-plus"></i> Add inclusion
+                    </button>
+                </div>
+            </div>
+
+            <!-- Total ingredients below recipe editor -->
+            <div class="sd-output-section">
+                <div class="sd-output-title">Total ingredients</div>
+                <div id="sdTotalTable"></div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Main dough recipe + Ferments -->
+        <div class="sd-col">
+            <div class="sd-output-section">
+                <div class="sd-output-title">Main dough recipe</div>
+                <div id="sdMainDoughTable"></div>
+            </div>
+            <div class="sd-output-section">
+                <div class="sd-output-title">Ferments</div>
+                <div id="sdFermentsTable"></div>
+            </div>
+        </div>
+
+    </div><!-- sd-main-layout -->
+
+</div><!-- sd-wrap -->
+
+<script src="prices.js"></script>
+<script src="sourdough.js"></script>
+</body>
+</html>
