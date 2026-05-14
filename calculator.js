@@ -85,7 +85,7 @@ let flours = [
 
 let ingredients = [
     { id: 3, name: 'Yeast',       pct: 1.8,  price: 0 },
-    { id: 4, name: 'Salt',        pct: 1.5,  price: 0 },
+    { id: 4, name: 'Salt',        pct: 1.2,  price: 0 },
     { id: 5, name: 'Milk Powder', pct: 4,    price: 0 },
     { id: 6, name: 'Sugar',       pct: 10,   price: 0 },
     { id: 7, name: 'Milk',        pct: 25,   price: 0 },
