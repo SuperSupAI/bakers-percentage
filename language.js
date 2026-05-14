@@ -29,7 +29,13 @@ const translations = {
         'Sugar': 'น้ำตาล',
         'Milk': 'นม',
         'Water': 'น้ำ',
-        'Butter': 'เนย'
+        'Butter': 'เนย',
+        'White sesame': 'งาขาว',
+        'Black sesame': 'งาดำ',
+        'Chia seed': 'เมล็ด​เจีย',
+        'Flaxseed' : 'เมล็ด​แฟล​กซ์​',
+        'Sunflower seed' : 'เมล็ดทานตะวัน',
+        'Pumpkin seed' : 'เมล็ดฟักทอง',
     },
     en: {
         title: "Baker's Percentage Calculator",
@@ -61,7 +67,13 @@ const translations = {
         'Sugar': 'Sugar',
         'Milk': 'Milk',
         'Water': 'Water',
-        'Butter': 'Butter'
+        'Butter': 'Butter',
+        'White sesame': 'White sesame',
+        'Black sesame': 'Black sesame',
+        'Chia seed': 'Chia seed',
+        'Flaxseed' : 'Flaxseed',
+        'Sunflower seed' : 'Sunflower seed',
+        'Pumpkin seed' : 'Pumpkin seed',
     }
 };
 
@@ -99,7 +111,8 @@ function changeLang(lang) {
 
     renderTables();
     renderPortions();
-    
+    if (typeof renderInclusions === 'function') renderInclusions();
+
     document.getElementById('btn-th').classList.toggle('active', lang === 'th');
     document.getElementById('btn-en').classList.toggle('active', lang === 'en');
 }

@@ -93,6 +93,70 @@ let ingredients = [
     { id: 9, name: 'Butter',      pct: 9,    price: 0 }
 ];
 
+let inclusions = [
+    { id: 201, name: 'White sesame',   pct: 2, enabled: true, price: 0 },
+    { id: 202, name: 'Black sesame',   pct: 2, enabled: true, price: 0 },
+    { id: 203, name: 'Chia seed',      pct: 2, enabled: true, price: 0 },
+    { id: 204, name: 'Flaxseed',       pct: 2, enabled: true, price: 0 },
+    { id: 205, name: 'Sunflower seed', pct: 6, enabled: true, price: 0 },
+    { id: 206, name: 'Pumpkin seed',   pct: 6, enabled: true, price: 0 },
+];
+
+function renderInclusions() {
+    const container = document.getElementById('inclusionRows');
+    if (!container) return;
+    container.innerHTML = '';
+    inclusions.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'inclusion-row' + (item.enabled ? '' : ' inclusion-disabled');
+        const priceLabel = item.price ? item.price.toFixed(3) : '—';
+        const displayName = (typeof translations !== 'undefined' && translations[currentLang]?.[item.name])
+            ? translations[currentLang][item.name] : item.name;
+        row.innerHTML = `
+            <input type="checkbox" class="inclusion-check" ${item.enabled ? 'checked' : ''} onchange="toggleInclusion(${item.id}, this.checked)">
+            <input type="text" class="inclusion-name" value="${displayName}" list="price-names" oninput="updateInclusion(${item.id}, 'name', this.value)">
+            <div class="inclusion-pct-wrap">
+                <input type="number" class="inclusion-pct-input" value="${item.pct}" step="0.1" min="0" oninput="updateInclusion(${item.id}, 'pct', this.value)" ${item.enabled ? '' : 'disabled'}>
+                <span class="inclusion-pct-sym">%</span>
+            </div>
+            <span class="inclusion-weight" id="incw-${item.id}">— g</span>
+            <span class="inclusion-price" id="incp-${item.id}">${priceLabel}</span>
+            <span class="inclusion-cost cost-display" id="incc-${item.id}">—</span>
+            <button class="inclusion-del" onclick="removeInclusion(${item.id})">×</button>
+        `;
+        container.appendChild(row);
+    });
+    recalculateWeights();
+}
+
+function toggleInclusion(id, checked) {
+    const item = inclusions.find(x => x.id === id);
+    if (!item) return;
+    item.enabled = checked;
+    renderInclusions();
+}
+
+function updateInclusion(id, field, val) {
+    const item = inclusions.find(x => x.id === id);
+    if (!item) return;
+    item[field] = field === 'pct' ? (parseFloat(val) || 0) : val;
+    if (field === 'name') {
+        const entry = getPriceList()[val];
+        item.price = entry?.pricePerGram || 0;
+    }
+    recalculateWeights();
+}
+
+function addInclusion() {
+    inclusions.push({ id: Date.now(), name: 'ระบุชื่อเมล็ด', pct: 0, enabled: true, price: 0 });
+    renderInclusions();
+}
+
+function removeInclusion(id) {
+    inclusions = inclusions.filter(x => x.id !== id);
+    renderInclusions();
+}
+
 function refreshPriceDatalist() {
     let dl = document.getElementById('price-names');
     if (!dl) {
@@ -106,7 +170,7 @@ function refreshPriceDatalist() {
 // item.price stores ฿ per gram (pricePerGram)
 function autoFillPrices() {
     const priceList = getPriceList();
-    [...flours, ...ingredients].forEach(item => {
+    [...flours, ...ingredients, ...inclusions].forEach(item => {
         const entry = priceList[item.name];
         if (!item.price && entry?.pricePerGram > 0) {
             item.price = entry.pricePerGram;
@@ -278,6 +342,44 @@ function recalculateWeights() {
     flours.forEach(updateRowCost);
     ingredients.forEach(updateRowCost);
 
+    let inclusionTotalPct = 0;
+    let inclusionTotalWeight = 0;
+    let inclusionTotalCost = 0;
+    inclusions.forEach(item => {
+        const rawW = (totalFlourBase * item.pct) / 100;
+        const weightEl = document.getElementById(`incw-${item.id}`);
+        if (weightEl) weightEl.textContent = item.enabled ? roundInteger(rawW) + ' g' : '—';
+
+        const priceEl = document.getElementById(`incp-${item.id}`);
+        if (priceEl) priceEl.textContent = item.price ? item.price.toFixed(3) : '—';
+
+        const cost = rawW * (item.price || 0);
+        const costEl = document.getElementById(`incc-${item.id}`);
+        if (costEl) {
+            if (item.enabled && (item.price || 0) > 0) {
+                const cpp = totalPieces > 0 ? cost / totalPieces : 0;
+                costEl.innerHTML =
+                    `<span class="cost-total-val">฿${cost.toFixed(2)}</span>` +
+                    `<small class="cost-per-piece">฿${cpp.toFixed(2)}/ก้อน</small>`;
+            } else {
+                costEl.textContent = '—';
+            }
+        }
+
+        if (item.enabled) {
+            inclusionTotalPct += item.pct;
+            inclusionTotalWeight += rawW;
+            inclusionTotalCost += cost;
+            totalCost += cost;
+        }
+    });
+    const incPctEl  = document.getElementById('inclusionTotalPct');
+    const incWgtEl  = document.getElementById('inclusionTotalWeight');
+    const incCostEl = document.getElementById('inclusionTotalCost');
+    if (incPctEl)  incPctEl.textContent  = inclusionTotalPct.toFixed(1);
+    if (incWgtEl)  incWgtEl.textContent  = roundInteger(inclusionTotalWeight);
+    if (incCostEl) incCostEl.textContent = inclusionTotalCost > 0 ? '฿' + inclusionTotalCost.toFixed(2) : '';
+
     const totalCostEl = document.getElementById('totalCostDisplay');
     if (totalCostEl) totalCostEl.textContent = '฿' + totalCost.toFixed(2);
 
@@ -334,7 +436,7 @@ function removeItem(type, id) {
 function saveData() {
     try {
         localStorage.setItem('bakersCalcData', JSON.stringify({
-            portions, flours, ingredients, timestamp: Date.now()
+            portions, flours, ingredients, inclusions, timestamp: Date.now()
         }));
     } catch(e) {}
 }
@@ -342,6 +444,7 @@ function saveData() {
 initDefaultPrices();
 renderTables();
 renderPortions();
+renderInclusions();
 
 function showSummary() {
     const portionsTotal  = portions.reduce((s, p) => s + p.qty * p.weight, 0);
@@ -371,6 +474,13 @@ function showSummary() {
     const flourRows = flours.map(f => makeRow(f, 's-flour')).join('');
     const ingRows   = ingredients.map(i => makeRow(i, '')).join('');
 
+    const enabledInclusions = inclusions.filter(i => i.enabled);
+    const incTotalPct = enabledInclusions.reduce((s, i) => s + i.pct, 0);
+    const incRows = enabledInclusions.length > 0
+        ? `<tr class="s-inclusion-header"><td colspan="4" style="padding-top:10px;font-size:12px;color:var(--color-text-muted);font-weight:700;letter-spacing:0.3px;">INCLUSIONS (${incTotalPct.toFixed(1)}% of flour)</td></tr>`
+          + enabledInclusions.map(i => makeRow(i, 's-inclusion')).join('')
+        : '';
+
     const thCost     = t.thCost    || 'ราคา (฿)';
     const yieldParts = portions.map(p => `${p.qty} × ${p.weight} g`).join(' + ');
     const cpp_total  = totalPieces > 0 ? totalCost / totalPieces : 0;
@@ -393,7 +503,7 @@ function showSummary() {
                 <th>${t.thWeight || 'Weight (g)'}</th>
                 <th>${thCost}</th>
             </tr></thead>
-            <tbody>${flourRows}${ingRows}</tbody>
+            <tbody>${flourRows}${ingRows}${incRows}</tbody>
             <tfoot><tr>
                 <td colspan="3" class="summary-total">${t.totalLabel || 'Total'}: ${totalDough.toLocaleString()} g</td>
                 <td class="summary-total">${totalCost > 0 ? '฿' + totalCost.toFixed(2) : '—'}</td>

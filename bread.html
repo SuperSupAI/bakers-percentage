@@ -82,6 +82,18 @@
         <button onclick="addItem('ing')" id="btn-add-ing"><i class="ti ti-plus"></i> เพิ่มส่วนผสมอื่น</button>
     </div>
 
+    <!-- Inclusions Section -->
+    <div class="inclusion-section">
+        <div class="inclusion-header">
+            <span class="inclusion-title"><i class="ti ti-grain"></i> Inclusions</span>
+            <span class="inclusion-total-label">รวม: <span id="inclusionTotalPct">0.0</span>% = <span id="inclusionTotalWeight">0</span> g <span class="inclusion-total-cost" id="inclusionTotalCost"></span></span>
+        </div>
+        <div id="inclusionRows"></div>
+        <div class="inclusion-add-row">
+            <button onclick="addInclusion()"><i class="ti ti-plus"></i> เพิ่ม</button>
+        </div>
+    </div>
+
     <div class="formula-note" id="txt-note">
         <strong>Rounding:</strong> ระบบจะปัดเศษเป็นจำนวนเต็ม (เช่น 594.5 → 595)
     </div>

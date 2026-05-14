@@ -12,6 +12,12 @@ const DEFAULT_PRICES = [
     { name: 'Milk',              qty: 830, price: 48.75  },
     { name: 'Water',             qty: 1000, price: 0   },
     { name: 'Butter',            qty: 1000,  price: 400  },
+    { name: 'White sesame',      qty: 100,  price: 30  },
+    { name: 'Black sesame',      qty: 100,  price: 30  },
+    { name: 'Chia seed',         qty: 100,  price: 37  },
+    { name: 'Flaxseed',          qty: 100,  price: 31  },
+    { name: 'Sunflower seed',    qty: 500,  price: 90  },
+    { name: 'Pumpkin seed',      qty: 500,  price: 130  },
 ];
 
 function getPriceList() {
@@ -161,7 +167,7 @@ function renderCostBreakdown() {
     loadCalcData();
     if (!calcData) return;
 
-    const { portions, flours, ingredients } = calcData;
+    const { portions, flours, ingredients, inclusions: savedInclusions } = calcData;
     const portionsTotal  = portions.reduce((s, p) => s + p.qty * p.weight, 0);
     const totalPieces    = portions.reduce((s, p) => s + p.qty, 0);
     const otherSum       = ingredients.reduce((s, i) => s + i.pct, 0);
@@ -175,13 +181,24 @@ function renderCostBreakdown() {
     const rows = [];
 
     [...flours, ...ingredients].forEach(item => {
-        const rawW        = (totalFlourBase * item.pct) / 100;
-        const w           = Math.round(rawW);
-        const pricePerGram = pl[item.name] ?? (item.price || 0); // price list takes priority
-        const cost        = rawW * pricePerGram;
-        const cpp         = totalPieces > 0 ? cost / totalPieces : 0;
-        totalCost        += cost;
-        rows.push({ item, w, pricePerGram, cost, cpp, isFlour: flours.includes(item) });
+        const rawW         = (totalFlourBase * item.pct) / 100;
+        const w            = Math.round(rawW);
+        const pricePerGram = pl[item.name] ?? (item.price || 0);
+        const cost         = rawW * pricePerGram;
+        const cpp          = totalPieces > 0 ? cost / totalPieces : 0;
+        totalCost         += cost;
+        rows.push({ item, w, pricePerGram, cost, cpp, isFlour: flours.includes(item), isInclusion: false });
+    });
+
+    const enabledInclusions = (savedInclusions || []).filter(i => i.enabled);
+    enabledInclusions.forEach(item => {
+        const rawW         = (totalFlourBase * item.pct) / 100;
+        const w            = Math.round(rawW);
+        const pricePerGram = pl[item.name] ?? (item.price || 0);
+        const cost         = rawW * pricePerGram;
+        const cpp          = totalPieces > 0 ? cost / totalPieces : 0;
+        totalCost         += cost;
+        rows.push({ item, w, pricePerGram, cost, cpp, isFlour: false, isInclusion: true });
     });
 
     const cpp_total = totalPieces > 0 ? totalCost / totalPieces : 0;
@@ -196,12 +213,18 @@ function renderCostBreakdown() {
     window._cpp         = cpp_total;
     calcProfit();
 
+    let incHeaderInserted = false;
     const tbody = rows.map(r => {
-        const cls      = r.isFlour ? 'flour-item' : '';
-        const ppgStr   = r.pricePerGram > 0 ? r.pricePerGram.toFixed(5) : '—';
-        const costStr  = r.pricePerGram > 0 ? '฿' + r.cost.toFixed(2) : '—';
-        const cppStr   = r.pricePerGram > 0 ? '฿' + r.cpp.toFixed(2)  : '—';
-        return `<tr class="${cls}">
+        let cls = r.isFlour ? 'flour-item' : '';
+        let prefix = '';
+        if (r.isInclusion && !incHeaderInserted) {
+            incHeaderInserted = true;
+            prefix = `<tr><td colspan="6" style="padding-top:10px;font-size:11px;font-weight:700;color:var(--color-text-muted);letter-spacing:0.3px;">INCLUSIONS</td></tr>`;
+        }
+        const ppgStr  = r.pricePerGram > 0 ? r.pricePerGram.toFixed(5) : '—';
+        const costStr = r.pricePerGram > 0 ? '฿' + r.cost.toFixed(2) : '—';
+        const cppStr  = r.pricePerGram > 0 ? '฿' + r.cpp.toFixed(2)  : '—';
+        return prefix + `<tr class="${cls}">
             <td>${r.item.name}</td>
             <td>${r.item.pct}%</td>
             <td>${r.w.toLocaleString()} g</td>
