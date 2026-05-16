@@ -147,6 +147,14 @@ function updateInclusion(id, field, val) {
     recalculateWeights();
 }
 
+function showInclusionSection() {
+    const section = document.getElementById('inclusionSection');
+    const btn     = document.getElementById('btn-add-inclusion');
+    if (section) section.style.display = '';
+    if (btn)     btn.style.display     = 'none';
+    recalculateWeights();
+}
+
 function addInclusion() {
     inclusions.push({ id: Date.now(), name: 'ระบุชื่อเมล็ด', pct: 0, enabled: true, price: 0 });
     renderInclusions();
@@ -342,9 +350,17 @@ function recalculateWeights() {
     flours.forEach(updateRowCost);
     ingredients.forEach(updateRowCost);
 
+    const doughCost = totalCost;
+    const doughCpp  = totalPieces > 0 ? doughCost / totalPieces : 0;
+    const doughCostEl = document.getElementById('doughCostDisplay');
+    const doughCppEl  = document.getElementById('doughCppDisplay');
+    if (doughCostEl) doughCostEl.textContent = '฿' + doughCost.toFixed(2);
+    if (doughCppEl)  doughCppEl.textContent  = totalPieces > 0 ? '฿' + doughCpp.toFixed(2) + '/ก้อน' : '';
+
     let inclusionTotalPct = 0;
     let inclusionTotalWeight = 0;
     let inclusionTotalCost = 0;
+    const inclusionVisible = document.getElementById('inclusionSection')?.style.display !== 'none';
     inclusions.forEach(item => {
         const rawW = (totalFlourBase * item.pct) / 100;
         const weightEl = document.getElementById(`incw-${item.id}`);
@@ -366,7 +382,7 @@ function recalculateWeights() {
             }
         }
 
-        if (item.enabled) {
+        if (item.enabled && inclusionVisible) {
             inclusionTotalPct += item.pct;
             inclusionTotalWeight += rawW;
             inclusionTotalCost += cost;
@@ -381,7 +397,9 @@ function recalculateWeights() {
     if (incCostEl) incCostEl.textContent = inclusionTotalCost > 0 ? '฿' + inclusionTotalCost.toFixed(2) : '';
 
     const totalCostEl = document.getElementById('totalCostDisplay');
+    const totalCppEl  = document.getElementById('totalCppDisplay');
     if (totalCostEl) totalCostEl.textContent = '฿' + totalCost.toFixed(2);
+    if (totalCppEl)  totalCppEl.textContent  = totalPieces > 0 ? '฿' + (totalCost / totalPieces).toFixed(2) + '/ก้อน' : '';
 
     const roundedTotal = parseFloat(totalCost.toFixed(2));
     let allocated = 0;

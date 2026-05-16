@@ -45,8 +45,17 @@
             <div class="piece-result-val" id="totalDoughFinal">0 g</div>
         </div>
         <div class="cost-total-row">
-            <span class="cost-label">ต้นทุนรวม</span>
-            <span id="totalCostDisplay" class="cost-val">฿0.00</span>
+            <span class="cost-label">โดว์</span>
+            <span class="cost-pair">
+                <span id="doughCostDisplay" class="cost-val">฿0.00</span>
+                <small id="doughCppDisplay" class="cost-cpp"></small>
+            </span>
+            <span class="cost-sep">|</span>
+            <span class="cost-label">โดว์+Inclusion</span>
+            <span class="cost-pair">
+                <span id="totalCostDisplay" class="cost-val">฿0.00</span>
+                <small id="totalCppDisplay" class="cost-cpp"></small>
+            </span>
             <a href="pricing.html" class="pricing-link"><i class="ti ti-calculator"></i> ต้นทุนละเอียด</a>
         </div>
     </div>
@@ -80,10 +89,11 @@
     </table>
     <div class="add-row">
         <button onclick="addItem('ing')" id="btn-add-ing"><i class="ti ti-plus"></i> เพิ่มส่วนผสมอื่น</button>
+        <button onclick="showInclusionSection()" id="btn-add-inclusion"><i class="ti ti-grain"></i> เพิ่ม Inclusion</button>
     </div>
 
     <!-- Inclusions Section -->
-    <div class="inclusion-section">
+    <div class="inclusion-section" id="inclusionSection" style="display:none">
         <div class="inclusion-header">
             <span class="inclusion-title"><i class="ti ti-grain"></i> Inclusions</span>
             <span class="inclusion-total-label">รวม: <span id="inclusionTotalPct">0.0</span>% = <span id="inclusionTotalWeight">0</span> g <span class="inclusion-total-cost" id="inclusionTotalCost"></span></span>
