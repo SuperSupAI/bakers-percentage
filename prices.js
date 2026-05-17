@@ -203,9 +203,10 @@ function renderCostBreakdown() {
 
     const cpp_total = totalPieces > 0 ? totalCost / totalPieces : 0;
 
-    document.getElementById('cardTotalCost').textContent    = '฿' + totalCost.toFixed(2);
+    const ceilFmt = v => (Math.ceil(v * 100) / 100).toFixed(2);
+    document.getElementById('cardTotalCost').textContent    = '฿' + ceilFmt(totalCost);
     document.getElementById('cardDoughWeight').textContent  = portionsTotal.toLocaleString() + ' g';
-    document.getElementById('cardCostPerPiece').textContent = '฿' + cpp_total.toFixed(2);
+    document.getElementById('cardCostPerPiece').textContent = '฿' + ceilFmt(cpp_total);
     document.getElementById('cardPieces').textContent       = totalPieces + ' ก้อน';
 
     window._totalCost   = totalCost;
@@ -221,9 +222,9 @@ function renderCostBreakdown() {
             incHeaderInserted = true;
             prefix = `<tr><td colspan="6" style="padding-top:10px;font-size:11px;font-weight:700;color:var(--color-text-muted);letter-spacing:0.3px;">INCLUSIONS</td></tr>`;
         }
-        const ppgStr  = r.pricePerGram > 0 ? r.pricePerGram.toFixed(5) : '—';
-        const costStr = r.pricePerGram > 0 ? '฿' + r.cost.toFixed(2) : '—';
-        const cppStr  = r.pricePerGram > 0 ? '฿' + r.cpp.toFixed(2)  : '—';
+        const ppgStr  = r.pricePerGram > 0 ? r.pricePerGram.toFixed(2) : '—';
+        const costStr = r.pricePerGram > 0 ? '฿' + ceilFmt(r.cost) : '—';
+        const cppStr  = r.pricePerGram > 0 ? '฿' + ceilFmt(r.cpp)  : '—';
         return prefix + `<tr class="${cls}">
             <td>${r.item.name}</td>
             <td>${r.item.pct}%</td>
@@ -234,8 +235,8 @@ function renderCostBreakdown() {
         </tr>`;
     }).join('');
 
-    const totalCostStr = totalCost > 0 ? '฿' + totalCost.toFixed(2) : '—';
-    const cppStr       = totalCost > 0 ? '฿' + cpp_total.toFixed(2)  : '—';
+    const totalCostStr = totalCost > 0 ? '฿' + ceilFmt(totalCost) : '—';
+    const cppStr       = totalCost > 0 ? '฿' + ceilFmt(cpp_total)  : '—';
 
     document.getElementById('costTableContainer').innerHTML = `
         <table class="cost-table">

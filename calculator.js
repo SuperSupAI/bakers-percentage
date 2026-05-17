@@ -155,6 +155,14 @@ function showInclusionSection() {
     recalculateWeights();
 }
 
+function hideInclusionSection() {
+    const section = document.getElementById('inclusionSection');
+    const btn     = document.getElementById('btn-add-inclusion');
+    if (section) section.style.display = 'none';
+    if (btn)     btn.style.display     = '';
+    recalculateWeights();
+}
+
 function addInclusion() {
     inclusions.push({ id: Date.now(), name: 'ระบุชื่อเมล็ด', pct: 0, enabled: true, price: 0 });
     renderInclusions();
@@ -188,6 +196,10 @@ function autoFillPrices() {
 
 function roundInteger(value) {
     return Math.round(value);
+}
+
+function ceilFmt(value) {
+    return (Math.ceil(value * 100) / 100).toFixed(2);
 }
 
 function redistributeAutoFlours() {
@@ -262,7 +274,7 @@ function createRow(item, type) {
         <td><input type="text" value="${displayName}" list="price-names" oninput="updateData('${type}', ${item.id}, 'name', this.value)"></td>
         <td class="num-cell">${pctInputHtml}</td>
         <td class="num-cell"><span id="weight-${item.id}" class="weight-display">0</span></td>
-        <td class="num-cell"><span id="price-${item.id}" class="price-display">${item.price ? item.price.toFixed(3) : '—'}</span></td>
+        <td class="num-cell"><span id="price-${item.id}" class="price-display">${item.price ? item.price.toFixed(2) : '—'}</span></td>
         <td class="num-cell"><span id="cost-${item.id}" class="cost-display">—</span></td>
         <td style="text-align:center"><button class="del-btn" onclick="removeItem('${type}', ${item.id})">×</button></td>
     `;
@@ -281,7 +293,7 @@ function updateData(type, id, field, val) {
         const entry = getPriceList()[val];
         item.price = entry?.pricePerGram || 0;
         const priceEl = document.getElementById(`price-${id}`);
-        if (priceEl) priceEl.textContent = item.price ? item.price.toFixed(3) : '—';
+        if (priceEl) priceEl.textContent = item.price ? item.price.toFixed(2) : '—';
     }
 
     recalculateWeights();
@@ -340,8 +352,8 @@ function recalculateWeights() {
         if ((item.price || 0) > 0) {
             const cpp = totalPieces > 0 ? cost / totalPieces : 0;
             costEl.innerHTML =
-                `<span class="cost-total-val">฿${cost.toFixed(2)}</span>` +
-                `<small class="cost-per-piece">฿${cpp.toFixed(2)}/ก้อน</small>`;
+                `<span class="cost-total-val">฿${ceilFmt(cost)}</span>` +
+                `<small class="cost-per-piece">฿${ceilFmt(cpp)}/ก้อน</small>`;
         } else {
             costEl.textContent = '—';
         }
@@ -354,8 +366,8 @@ function recalculateWeights() {
     const doughCpp  = totalPieces > 0 ? doughCost / totalPieces : 0;
     const doughCostEl = document.getElementById('doughCostDisplay');
     const doughCppEl  = document.getElementById('doughCppDisplay');
-    if (doughCostEl) doughCostEl.textContent = '฿' + doughCost.toFixed(2);
-    if (doughCppEl)  doughCppEl.textContent  = totalPieces > 0 ? '฿' + doughCpp.toFixed(2) + '/ก้อน' : '';
+    if (doughCostEl) doughCostEl.textContent = '฿' + ceilFmt(doughCost);
+    if (doughCppEl)  doughCppEl.textContent  = totalPieces > 0 ? '฿' + ceilFmt(doughCpp) + '/ก้อน' : '';
 
     let inclusionTotalPct = 0;
     let inclusionTotalWeight = 0;
@@ -367,7 +379,7 @@ function recalculateWeights() {
         if (weightEl) weightEl.textContent = item.enabled ? roundInteger(rawW) + ' g' : '—';
 
         const priceEl = document.getElementById(`incp-${item.id}`);
-        if (priceEl) priceEl.textContent = item.price ? item.price.toFixed(3) : '—';
+        if (priceEl) priceEl.textContent = item.price ? item.price.toFixed(2) : '—';
 
         const cost = rawW * (item.price || 0);
         const costEl = document.getElementById(`incc-${item.id}`);
@@ -375,8 +387,8 @@ function recalculateWeights() {
             if (item.enabled && (item.price || 0) > 0) {
                 const cpp = totalPieces > 0 ? cost / totalPieces : 0;
                 costEl.innerHTML =
-                    `<span class="cost-total-val">฿${cost.toFixed(2)}</span>` +
-                    `<small class="cost-per-piece">฿${cpp.toFixed(2)}/ก้อน</small>`;
+                    `<span class="cost-total-val">฿${ceilFmt(cost)}</span>` +
+                    `<small class="cost-per-piece">฿${ceilFmt(cpp)}/ก้อน</small>`;
             } else {
                 costEl.textContent = '—';
             }
@@ -394,27 +406,21 @@ function recalculateWeights() {
     const incCostEl = document.getElementById('inclusionTotalCost');
     if (incPctEl)  incPctEl.textContent  = inclusionTotalPct.toFixed(1);
     if (incWgtEl)  incWgtEl.textContent  = roundInteger(inclusionTotalWeight);
-    if (incCostEl) incCostEl.textContent = inclusionTotalCost > 0 ? '฿' + inclusionTotalCost.toFixed(2) : '';
+    if (incCostEl) incCostEl.textContent = inclusionTotalCost > 0 ? '฿' + ceilFmt(inclusionTotalCost) : '';
 
     const totalCostEl = document.getElementById('totalCostDisplay');
     const totalCppEl  = document.getElementById('totalCppDisplay');
-    if (totalCostEl) totalCostEl.textContent = '฿' + totalCost.toFixed(2);
-    if (totalCppEl)  totalCppEl.textContent  = totalPieces > 0 ? '฿' + (totalCost / totalPieces).toFixed(2) + '/ก้อน' : '';
+    if (totalCostEl) totalCostEl.textContent = '฿' + ceilFmt(totalCost);
+    if (totalCppEl)  totalCppEl.textContent  = totalPieces > 0 ? '฿' + ceilFmt(totalCost / totalPieces) + '/ก้อน' : '';
 
-    const roundedTotal = parseFloat(totalCost.toFixed(2));
     let allocated = 0;
     portions.forEach((p, idx) => {
         const el = document.getElementById(`portion-cost-${p.id}`);
         if (!el) return;
         if (totalCost > 0 && portionsTotal > 0) {
-            let pCost;
-            if (idx === portions.length - 1) {
-                pCost = parseFloat((roundedTotal - allocated).toFixed(2));
-            } else {
-                pCost = parseFloat((totalCost * (p.qty * p.weight) / portionsTotal).toFixed(2));
-                allocated += pCost;
-            }
-            const pCpp = p.qty > 0 ? pCost / p.qty : 0;
+            const pCostRaw = totalCost * (p.qty * p.weight) / portionsTotal;
+            const pCost    = Math.ceil(pCostRaw * 100) / 100;
+            const pCpp     = p.qty > 0 ? Math.ceil((pCost / p.qty) * 100) / 100 : 0;
             el.innerHTML = `<span class="pc-total">฿${pCost.toFixed(2)}</span><span class="pc-cpp">฿${pCpp.toFixed(2)}/ก้อน</span>`;
         } else {
             el.innerHTML = '';
@@ -484,7 +490,7 @@ function showSummary() {
         totalCost += cost;
         const cpp     = totalPieces > 0 ? cost / totalPieces : 0;
         const costStr = (item.price || 0) > 0
-            ? `฿${cost.toFixed(2)}<br><small style="color:var(--color-text-light)">฿${cpp.toFixed(2)}/ก้อน</small>`
+            ? `฿${ceilFmt(cost)}<br><small style="color:var(--color-text-light)">฿${ceilFmt(cpp)}/ก้อน</small>`
             : '—';
         return `<tr class="${cls}"><td>${getName(item)}</td><td>${item.pct}%</td><td>${w.toLocaleString()} g</td><td>${costStr}</td></tr>`;
     };
@@ -505,8 +511,8 @@ function showSummary() {
 
     const costSummary = totalCost > 0 ? `
         <div class="summary-cost-row">
-            <span>ต้นทุนรวม: <strong>฿${totalCost.toFixed(2)}</strong></span>
-            <span>เฉลี่ย/ก้อน: <strong>฿${cpp_total.toFixed(2)}</strong></span>
+            <span>ต้นทุนรวม: <strong>฿${ceilFmt(totalCost)}</strong></span>
+            <span>เฉลี่ย/ก้อน: <strong>฿${ceilFmt(cpp_total)}</strong></span>
         </div>` : '';
 
     document.getElementById('summaryContent').innerHTML = `
